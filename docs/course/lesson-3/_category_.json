@@ -1,0 +1,8 @@
+{
+  "label": "Lektion 3",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Hur kan vi använda oss av Storyblok och Nextjs för att bygga webbplatser?"
+  }
+}

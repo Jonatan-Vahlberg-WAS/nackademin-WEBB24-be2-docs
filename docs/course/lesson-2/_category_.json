@@ -1,0 +1,8 @@
+{
+  "label": "Lektion 2",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Vad är Storyblok? Hur kan vi använda oss av det inom CMS?"
+  }
+}

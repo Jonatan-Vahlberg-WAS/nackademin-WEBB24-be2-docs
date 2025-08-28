@@ -1,0 +1,8 @@
+{
+  "label": "Lektion 5",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "Generics, Guards och Assertions"
+  }
+}
