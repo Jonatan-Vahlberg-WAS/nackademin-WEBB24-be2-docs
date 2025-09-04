@@ -1,20 +1,21 @@
 ---
 sidebar_position: 1
 title: Inför lektionen
+icon: <FaTasks />
 ---
 
 **Vad kan du göra för att förbereda dig för lektionen?**
 
 **Videor**
 
-[What is CMS?](https://www.youtube.com/watch?v=deqX0gMeUVc)
+[Typescript in 100 seconds](https://www.youtube.com/watch?v=zQnBQ4tB3ZA&pp=ygURdHlwZXNjcmlwdCBiYXNpY3M=)
 
-[Headless CMS Explained](https://www.youtube.com/watch?v=ajRbuyLUfZE)
+[Typescript for Javascript Developers in 15 min](https://www.youtube.com/watch?v=JUORwadOU7s&pp=ygURdHlwZXNjcmlwdCBiYXNpY3M=)
 
 **Dokumentation**
 
-[Storyblok Documentation](https://www.storyblok.com/docs)
+[Typescript Official Documentation](https://www.typescriptlang.org/docs/)
 
-[Storyblok API Documentation](https://www.storyblok.com/docs/api/content-delivery/v2/getting-started/introduction)
+[TypeScript in 5 minutes](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)
 
-[Storyblok Case Studies](https://www.storyblok.com/case-studies)
+[TypeScript Cheatsheet](https://www.typescriptlang.org/cheatsheet)

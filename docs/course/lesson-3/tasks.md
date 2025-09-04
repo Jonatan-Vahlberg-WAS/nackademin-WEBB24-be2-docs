@@ -3,4 +3,5 @@ sidebar_position: 5
 title: Uppgifter
 ---
 
-**Mer information kommer snart.**
+import CollapsibleCard from "@site/src/components/_library/CollapsibleCard/TWCollapsibleCard";
+

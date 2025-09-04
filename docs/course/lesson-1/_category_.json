@@ -3,6 +3,6 @@
   "position": 2,
   "link": {
     "type": "generated-index",
-    "description": "Vad är ett CMS?"
+    "description": "Vad är Typescript? Hur kan vi sätta upp en typescript-miljö i React?"
   }
 }
