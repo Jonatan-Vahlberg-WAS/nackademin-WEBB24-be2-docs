@@ -1,12 +1,26 @@
 ---
 sidebar_position: 3
-title: "Hono: centralized exception hantering"
+title: "Hono: Centralized Exception Hantering"
 ---
 
-Key notes
-- We can move to a centralised exception handling by using Hono's error handler
+## Varför centralisera felhantering?
 
-- Go from this
+När vi bygger en större applikation vill vi undvika att sprida `try/catch`-block överallt i vår kod.  
+Det blir snabbt repetitivt, svåröverskådligt och riskerar att vi behandlar fel på inkonsekventa sätt.
+
+Genom att använda **Hono’s inbyggda error handler** kan vi:
+
+- Flytta all felhantering till en central plats
+- Göra koden renare och tydligare
+- Säkerställa enhetliga felmeddelanden och HTTP-statuskoder
+- Förhindra att oväntade fel kraschar servern
+
+---
+
+## Från lokalt `try/catch` till central hantering
+
+Tidigare såg en route ut ungefär så här:
+
 ```ts
 courseApp.put("/:id", courseValidator, async (c) => {
     const { id } = c.req.param();
@@ -22,33 +36,69 @@ courseApp.put("/:id", courseValidator, async (c) => {
     }
 });
 ```
-- To this
+
+Här hanterar vi felen direkt i vår route. Det fungerar, men det gör koden mer rörig och upprepande.
+
+---
+
+## Med `HTTPException`
+
+I stället kan vi kasta ett tydligt definierat fel när något går fel.  
+Då ser vår route ut så här:
 
 ```ts
 import { HTTPException } from "hono/http-exception";
+
 courseApp.put("/:id", courseValidator, async (c) => {
-  //... existing code
+  // ... existing code
   if (!course.data) {
     console.error("Course not found");
-    throw new HTTPException(404, { res: c.json({ error: "Course not found" }, 404) });
+    throw new HTTPException(404, {
+      res: c.json({ error: "Course not found" }, 404),
+    });
   }
   return c.json(course.data, 200);
 });
 ```
-- Remove the try catch block and send specific errors to the error handler
-- Have a central error handler in our `index.ts` file
+
+### Fördelar
+- Vi behöver inte längre skriva `try/catch` i varje route  
+- Alla fel skickas vidare till vår centraliserade error handler  
+- Koden blir kortare och lättare att läsa
+- Validator sköter all validering av data
+
+---
+
+## Global error handler i `index.ts`
+
+I vår `index.ts` kan vi definiera en central felhanterare med `app.onError`:
+
 ```ts
 import { HTTPException } from "hono/http-exception";
 
 app.onError((err, c) => {
-    // All explicit errors are HTTPExceptions
-  if(err instanceof HTTPException) {
-    return err.getResponse()
+  // Alla explicita fel är HTTPExceptions
+  if (err instanceof HTTPException) {
+    return err.getResponse();
   }
-  // All other errors are internal server errors until defined otherwise
+
+  // Alla andra fel tolkas som interna serverfel
   console.error(err);
   return c.json({ error: "Internal server error" }, 500);
 });
 ```
 
-- Not only do we clean up the code and make errors clearly defined but we also have a more robust error handling system that wont crash our server.
+Nu fångas **alla fel** i applikationen här:
+
+- Kända, definierade fel (`HTTPException`) skickas tillbaka med rätt statuskod  
+- Oväntade fel blir konsekvent `500 Internal Server Error`  
+
+---
+
+## Reflektion
+
+Med en centraliserad error handler:
+
+- Blir vår kod **renare och mer konsekvent**  
+- Blir det lättare att **debugga och logga** fel  
+- Kan vi garantera att servern inte kraschar av oväntade problem

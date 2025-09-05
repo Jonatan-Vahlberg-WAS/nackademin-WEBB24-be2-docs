@@ -1,6 +1,6 @@
 -- Create courses table
 CREATE TABLE courses (
-    course_id VARCHAR(255) PRIMARY KEY,
+    course_id VARCHAR(255) PRIMARY KEY UNIQUE,
     title VARCHAR(255) NOT NULL,
     instructor VARCHAR(255) NOT NULL,
     credits INT NOT NULL,
