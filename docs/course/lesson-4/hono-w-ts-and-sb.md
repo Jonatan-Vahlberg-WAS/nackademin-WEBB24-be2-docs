@@ -2,8 +2,7 @@
 sidebar_position: 2
 title: Hono + TypeScript + Supabase
 ---
-
-Gå igenom ["Inför lektionen"](/docs/course/lesson-4/prerequisites) innan du börjar den här lektionen.  
+ 
 I den här lektionen kommer vi koppla ihop vår Hono-app med en riktig databas via **Supabase**.  
 
 ## Vad är Supabase?
