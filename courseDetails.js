@@ -8,7 +8,7 @@ export default {
   startWeek: 38,
   endYear: 2025,
   endWeek: 42,
-  plan: "/files/kursplan_webb24_typescript.pdf",
+  plan: "/files/kursplan_webb24_be2.pdf",
   consultantDetails: {
     name: "Jonatan Vahlberg",
     email: "jonatan.vahlberg@nackademin.se",
@@ -80,7 +80,7 @@ export default {
       content: "UML-diagram + Gruppuppgift",
       time: "",
       mentorTime: "08:30-16:00",
-      lesson: "lektion-6",
+      lesson: "lektion-6---gruppuppgift-på-plats",
       kind: "lesson"
     },
     {
@@ -88,7 +88,7 @@ export default {
       date: "6/10",
       content: "Repition av typescript inom backend",
       time: "7h",
-      mentorTime: "08:30-16:00",
+      mentorTime: "08:30-09:00 + Eftermiddag",
       lesson: "lektion-7",
       kind: "lesson"
     },

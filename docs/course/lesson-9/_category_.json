@@ -1,0 +1,9 @@
+{
+  "label": "Lektion 9",
+  "position": 8,
+  "link": {
+    "type": "generated-index",
+    "title": "Lektion 9 - Typescript inom frontend - Context",
+    "description": "Hur implementerar vi context i typescript och när kan vi förlita oss på server side fetching?"
+  }
+}

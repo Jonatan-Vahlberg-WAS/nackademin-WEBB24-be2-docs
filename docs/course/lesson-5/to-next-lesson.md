@@ -3,7 +3,7 @@ sidebar_position: 9
 title: Till nästa lektion
 ---
 
-Inför nästa lektion ska ni ha gåått igenom UML-diagram såpass att ni har provat på att skapa ett UML-diagram och känner till nedan koncept:
+Inför nästa lektion ska ni ha gått igenom UML-diagram såpass att ni har provat på att skapa ett UML-diagram och känner till nedan koncept:
 
 - Use Case diagrams
  - Actors

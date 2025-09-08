@@ -1,0 +1,9 @@
+{
+  "label": "Lektion 8",
+  "position": 8,
+  "link": {
+    "type": "generated-index",
+    "title": "Lektion 8 - Typescript inom frontend - state, props & promises",
+    "description": "Genomgång av Typescript inom frontend. Hur kan vi hantera state, props och promises i TypeScript?"
+  }
+}
