@@ -21,7 +21,7 @@ Vi kommer använda Supabase för att spara och hämta våra kurser i stället f�
 
 2. **Ladda ner SQL-fil**  
    Hämta `courses.sql` från  
-   [`courses.sql`](./assets/courses.sql).
+   [`course.sql`](./assets/course.sql).
 
 3. **Skapa tabell `courses`**  
    Kör SQL-scriptet i Supabase SQL Editor för att skapa tabellen.
