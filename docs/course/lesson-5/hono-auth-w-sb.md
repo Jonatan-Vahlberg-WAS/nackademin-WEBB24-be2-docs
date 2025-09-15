@@ -3,120 +3,76 @@ sidebar_position: 2
 title: Hono Auth med Supabase
 ---
 
+I den här lektionen lägger vi till **autentisering** i vår Hono-app med hjälp av **Supabase Auth**.
+Alla requests passerar genom `optionalAuth` (som ser till att vi alltid har en Supabase-klient i context).
+När vi vill kräva inloggning använder vi `requireAuth`.
 
+---
 
-NOTES
-- Check which auth providers that Supabase offers.
-- activate mail and password authentication.
-- add a new route to the Hono app that handles the authentication.
- - (optional) Add a auth validator similar to the one we used for the courses and students.
- - (optional) Add a new route to the Hono app that handles the authentication.
- - (optional) Add a database file `database/auth.ts` that handles the authentication. Login and register.
- ```ts
- authApp.post("/login", loginValidator, async (c) => {
-  const { email, password } = c.req.valid("json");
-  const response = await auth.login(email, password);
-  if(response.error) {
-    throw new HTTPException(400, {
-      res: c.json({ error: "Invalid credentials" }, 400),
-    });
-  }
-  return c.json(response.data.user, 200);
-});
+## 1. Förberedelser
 
-authApp.post("/register", registerValidator, async (c) => {
-  const { email, password } = c.req.valid("json");
-  const response = await auth.register(email, password);
-  if(response.error) {
-    if(response.error.code === "email_exists") {
-      throw new HTTPException(409, {
-        res: c.json({ error: "Email already exists" }, 409),
-      });
-    }
-    throw new HTTPException(400, {
-      res: c.json({ error: "Failed to register" }, 400),
-    });
-  }
-  return c.json(response.data.user, 200);
-});
- ```
- - (optional) Add diffrent supabase validations such as `email_exists`, `password_too_weak`, `email_not_verified`, etc.
+### Aktivera e-post och lösenord i Supabase
 
- - Add Auth app to the Hono app.
- 
+I **Supabase Dashboard** → *Authentication* → *Providers*: aktivera **Email**.
+Det gör att användare kan registrera sig och logga in med e-postadress och lösenord.
 
- ## Row level authentication
- - Add row level authentication to the supabase database.
- `ALTER TABLE courses ENABLE ROW LEVEL SECURITY;`
- `ALTER TABLE students ENABLE ROW LEVEL SECURITY;`
+### Installera SSR-klienten
 
- - Add the policy to the supabase database.
- ```sql
--- Allow public read access to courses
-CREATE POLICY "Allow Public Read Access"
-ON courses
-FOR SELECT
-TO public
-USING (true);
+```bash
+npm install @supabase/ssr
+```
 
--- Allow authenticated users full access (INSERT, UPDATE, DELETE)
-CREATE POLICY "Allow Authenticated Full Access"
-ON courses
-FOR ALL
-TO authenticated
-USING (true);
- ```
+SSR-klienten gör att vi kan läsa och skriva sessionscookies i Hono.
 
- test by attempting to fetch either courses or students without being authenticated.
+### Skapa `lib/supabase.ts`
 
- ```termnial
- npm install @supabase/ssr
- ```
+Vi behöver våra credentials tillgängliga både för en global klient och för middleware.
 
- Change the `supabase.ts` file to export credentials instead of a static client.
- ```ts
-import { createClient } from '@supabase/supabase-js'
-import dotenv from 'dotenv'
+```ts
+import { createClient } from "@supabase/supabase-js"
+import dotenv from "dotenv"
 dotenv.config()
 
 const supabaseUrl = process.env.SUPABASE_URL as string
 const supabaseApiKey = process.env.SUPABASE_ANON_KEY as string
 
 if (!supabaseUrl || !supabaseApiKey) {
-    throw new Error('Missing Supabase credentials')
+  throw new Error("Missing Supabase credentials")
 }
 
-export const supabase = createClient(
-    supabaseUrl,
-    supabaseApiKey
-)
+export const supabase = createClient(supabaseUrl, supabaseApiKey)
 export { supabaseUrl, supabaseApiKey }
 ```
 
- - Create a `middleware/auth.ts` file.
- ```ts
- import type { Context, Next } from "hono";
-import { setCookie } from "hono/cookie";
-import { createServerClient, parseCookieHeader } from "@supabase/ssr";
-import type { SupabaseClient, User } from "@supabase/supabase-js";
-import { supabaseUrl, supabaseApiKey } from "../lib/supabase.js";
-import { HTTPException } from "hono/http-exception";
+---
 
-// Extend Hono context variables for TypeScript
+## 2. Middleware
+
+Vi skapar en middleware som hanterar **Supabase-klienten** och **användaren** för varje request.
+
+```ts
+// src/middleware/auth.ts
+import type { Context, Next } from "hono"
+import { setCookie } from "hono/cookie"
+import { createServerClient, parseCookieHeader } from "@supabase/ssr"
+import type { SupabaseClient, User } from "@supabase/supabase-js"
+import { supabaseUrl, supabaseApiKey } from "../lib/supabase.js"
+import { HTTPException } from "hono/http-exception"
+
 declare module "hono" {
   interface ContextVariableMap {
-    supabase: SupabaseClient;
-    user: User | null;
+    supabase: SupabaseClient
+    user: User | null
   }
 }
 
 function createSupabaseForRequest(c: Context) {
-  const client = createServerClient(supabaseUrl, supabaseApiKey, {
+  return createServerClient(supabaseUrl, supabaseApiKey, {
     cookies: {
       getAll() {
         return parseCookieHeader(c.req.header("Cookie") ?? "").map(
           ({ name, value }) => ({ name, value: value ?? "" })
-        );
+        )
       },
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value, options }) => {
@@ -126,113 +82,175 @@ function createSupabaseForRequest(c: Context) {
             secure: true,
             sameSite: "lax",
             path: "/",
-          });
-        });
+          })
+        })
       },
     },
-  });
-  return client;
+  })
+}
+
+export async function withSupabase(c: Context, next: Next) {
+  if (!c.get("supabase")) {
+    const sb = createSupabaseForRequest(c)
+    c.set("supabase", sb)
+
+    const { data: { user }, error } = await sb.auth.getUser()
+    c.set("user", error ? null : user)
+  }
+  return next()
+}
+
+export async function optionalAuth(c: Context, next: Next) {
+  return withSupabase(c, next)
+}
+
+export async function requireAuth(c: Context, next: Next) {
+  await withSupabase(c, async () => {})
+  const user = c.get("user")
+  if (!user) {
+    throw new HTTPException(401, { message: "Unauthorized" })
+  }
+  return next()
 }
 ```
-Explain the code.
 
-In the same file create a middleware that adds supabase to the context.
-```ts
-export async function withSupabase(c: Context, next: Next) {
-  const sb = createSupabaseForRequest(c);
-  c.set("supabase", sb);
-  const { data: { user }, error } = await sb.auth.getUser();
-  c.set("user", error ? null : user);
-  return next();
-};
-```
+**Förklaring:**
 
-then one that requires authentication.
+* `createSupabaseForRequest` skapar en Supabase-klient för just den här requesten.
+  Den läser cookies från request och kan skriva nya på response.
+* `withSupabase` sätter `supabase` och `user` i context om de inte redan finns.
+* `optionalAuth` kör alltid `withSupabase` och används globalt.
+* `requireAuth` använder `withSupabase` och kastar `401` om ingen användare är inloggad.
+
+---
+
+## 3. Auth-routes
+
+Skapa en egen route för login och register: `src/routes/auth.ts`.
+
 ```ts
-export async function requireAuth(c: Context, next: Next) {
-  const supabase = c.get("supabase") as SupabaseClient | undefined;
-  if (!supabase ) {
-    const temp = createSupabaseForRequest(c);
-    const { data: { user }, error } = await temp.auth.getUser();
-    c.set("supabase", temp);
-    c.set("user", error ? null : user);
+import { Hono } from "hono"
+import { HTTPException } from "hono/http-exception"
+
+export const authApp = new Hono()
+
+authApp.post("/login", async (c) => {
+  const { email, password } = await c.req.json()
+  const supabase = c.get("supabase")
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+
+  if (error) {
+    throw new HTTPException(400, { res: c.json({ error: "Invalid credentials" }, 400) })
   }
-  
-  const user = c.get("user") as User | null;
-  if (!user) {
-    return new HTTPException(401, { message: "Unauthorized" });
+
+  return c.json(data.user, 200)
+})
+
+authApp.post("/register", async (c) => {
+  const { email, password } = await c.req.json()
+  const supabase = c.get("supabase")
+  const { data, error } = await supabase.auth.signUp({ email, password })
+
+  if (error) {
+    throw new HTTPException(400, { res: c.json({ error: error.message }, 400) })
   }
-  return next();
-};
+
+  return c.json(data.user, 200)
+})
 ```
 
-And finally one that is optional auth for potential user interaction.
-```ts
-export async function optionalAuth(c: Context, next: Next) {
-  const supabase = c.get("supabase") as SupabaseClient | undefined;
-  if (!supabase) {
-    const temp = createSupabaseForRequest(c);
-    const { data: { user }, error } = await temp.auth.getUser();
-    c.set("supabase", temp);
-    c.set("user", error ? null : user);
-  }
-  return next();
-};
+**Förklaring:**
+
+* `login` loggar in med e-post och lösenord. Om det lyckas sätts en session-cookie.
+* `register` skapar en ny användare. Om e-postverifiering är påslagen måste användaren bekräfta via mejl.
+
+---
+
+## 4. Row Level Security (RLS)
+
+Aktivera RLS i databasen:
+
+```sql
+ALTER TABLE courses ENABLE ROW LEVEL SECURITY;
+ALTER TABLE students ENABLE ROW LEVEL SECURITY;
 ```
 
-implement the optional auth middleware on all routes in the index.ts file.
-```ts
-app.use("*", optionalAuth);
+Skapa policies för `courses`:
+
+```sql
+-- Tillåt alla att läsa
+CREATE POLICY "Allow Public Read Access"
+ON courses
+FOR SELECT
+TO public
+USING (true);
+
+-- Tillåt inloggade att göra allt
+CREATE POLICY "Allow Authenticated Full Access"
+ON courses
+FOR ALL
+TO authenticated
+USING (true);
 ```
 
-Now within `routes/course.ts` change requests to use the context based supabase client.
+**Förklaring:**
+Databasen skyddas även om någon försöker gå runt API\:t.
+Alla kan läsa, men bara inloggade kan skapa, uppdatera eller ta bort.
+
+---
+
+## 5. Koppla ihop i appen
+
+I `src/index.ts`:
 
 ```ts
+import { Hono } from "hono"
+import { optionalAuth } from "./middleware/auth.js"
+import { authApp } from "./routes/auth.js"
+
+const app = new Hono()
+
+app.use("*", optionalAuth)   // alltid supabase + ev. user
+app.route("/auth", authApp)  // auth-routes
+```
+
+---
+
+## 6. Använd `requireAuth` när det behövs
+
+I `src/routes/course.ts`:
+
+```ts
+import { Hono } from "hono"
+import { requireAuth } from "../middleware/auth.js"
+import * as db from "../database/course.js"
+
+export const courseApp = new Hono()
+
+// Öppen läsning
 courseApp.get("/", async (c) => {
-  try {
-    const sb = c.get("supabase");
-    const courses: Course[] = await db.getCourses(sb);
-    return c.json(courses);
-  } catch (error) {
-    return c.json([]);
+  const sb = c.get("supabase")
+  const courses = await db.getCourses(sb)
+  return c.json(courses)
+})
+
+// Endast för inloggade
+courseApp.post("/", requireAuth, async (c) => {
+  const sb = c.get("supabase")
+  const newCourse: NewCourse = await c.req.json()
+  const response = await db.createCourse(sb, newCourse)
+
+  if (response.error) {
+    return c.json({ error: response.error.message }, 400)
   }
-});
+
+  return c.json(response.data, 201)
+})
 ```
 
-Within the `database/course.ts` file change the function to use the context based supabase client.
-```ts
-import type {
-  PostgrestSingleResponse,
-  SupabaseClient,
-} from "@supabase/supabase-js";
+---
+|Middleware|När du använder den|Vad den gör|Exempel på routes|
+| - | - | - | - |
+| **`optionalAuth`** | Som *global middleware* (på hela appen) | Lägger till en Supabase-klient i `c.get("supabase")`. Om en session finns i cookies sätts även `c.get("user")`, annars `null`. | `app.use("*", optionalAuth)` → alla requests kan läsa från databasen (även anonyma).           |
+| **`requireAuth`**  | På specifika routes där det krävs inloggning | Säkerställer att `c.get("user")` finns. Annars returneras `401 Unauthorized`.                                                  | `POST /courses`, `PUT /courses/:id`, `DELETE /courses/:id` – dvs. operationer som ändrar data. |
 
-export const getCourses = async (sb: SupabaseClient) => {
-  const query = sb.from("courses").select("*"); // To Be improved upon
-  const courses: PostgrestSingleResponse<Course[]> = await query;
-  return courses.data || [];
-};
-
-export const createCourse = async (sb: SupabaseClient, course: NewCourse) => {
-  const query = sb.from("courses").insert(course).select().single();
-  const response: PostgrestSingleResponse<Course> = await query;
-  return response;
-};
-```
-
-finally back within `routes/course.ts` change the function to use the context based supabase client and the new require auth middleware.
-```ts
-import { requireAuth } from "../middleware/auth.js";
-//...
-courseApp.post("/", requireAuth, courseValidator, async (c) => {
-    const sb = c.get("supabase");
-    const newCourse: NewCourse = c.req.valid("json");
-    const response: PostgrestSingleResponse<Course> = await db.createCourse(sb, newCourse);
-    if(response.error) {
-      throw new HTTPException(400, {
-        res: c.json({ error: response.error.message }, 400),
-      });
-    }
-    const course: Course = response.data;
-    return c.json(course, 201);
-});
-```
