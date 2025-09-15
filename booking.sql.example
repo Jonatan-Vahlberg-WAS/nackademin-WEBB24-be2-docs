@@ -1,0 +1,52 @@
+create TABLE appointments (
+    id SERIAL PRIMARY KEY,
+    scheduler_id VARCHAR(255) NOT NULL,
+    date DATE NOT NULL,
+    time TIME NOT NULL,
+    length INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE bookings (
+    id SERIAL PRIMARY KEY,
+    scheduler_id VARCHAR(255) NOT NULL,
+    appointment_id INT REFERENCES appointments(id) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+INSERT INTO appointments (scheduler_id, date, time, length) 
+VALUES ('webb24-be-2-presentation', '2025-11-6', '09:00', 15),
+('webb24-be-2-presentation', '2025-11-6', '09:15', 15),
+('webb24-be-2-presentation', '2025-11-6', '09:30', 15),
+('webb24-be-2-presentation', '2025-11-6', '09:45', 15),
+('webb24-be-2-presentation', '2025-11-6', '10:00', 15),
+('webb24-be-2-presentation', '2025-11-6', '10:15', 15),
+('webb24-be-2-presentation', '2025-11-6', '10:30', 15),
+('webb24-be-2-presentation', '2025-11-6', '10:45', 15),
+('webb24-be-2-presentation', '2025-11-6', '11:00', 15),
+('webb24-be-2-presentation', '2025-11-6', '11:15', 15),
+('webb24-be-2-presentation', '2025-11-6', '11:30', 15),
+('webb24-be-2-presentation', '2025-11-6', '11:45', 15),
+('webb24-be-2-presentation', '2025-11-6', '12:00', 15),
+('webb24-be-2-presentation', '2025-11-6', '12:15', 15),
+('webb24-be-2-presentation', '2025-11-6', '12:30', 15),
+('webb24-be-2-presentation', '2025-11-6', '13:00', 15),
+('webb24-be-2-presentation', '2025-11-6', '13:15', 15),
+('webb24-be-2-presentation', '2025-11-6', '13:30', 15),
+('webb24-be-2-presentation', '2025-11-6', '13:45', 15),
+('webb24-be-2-presentation', '2025-11-6', '14:00', 15),
+('webb24-be-2-presentation', '2025-11-6', '14:15', 15),
+('webb24-be-2-presentation', '2025-11-6', '14:30', 15),
+('webb24-be-2-presentation', '2025-11-6', '14:45', 15),
+('webb24-be-2-presentation', '2025-11-6', '15:00', 15),
+('webb24-be-2-presentation', '2025-11-6', '15:15', 15),
+('webb24-be-2-presentation', '2025-11-6', '15:30', 15),
+('webb24-be-2-presentation', '2025-11-6', '15:45', 15),
+('webb24-be-2-presentation', '2025-11-6', '16:00', 15),
+('webb24-be-2-presentation', '2025-11-6', '16:15', 15),
+('webb24-be-2-presentation', '2025-11-6', '16:30', 15),
+('webb24-be-2-presentation', '2025-11-6', '16:45', 15);
