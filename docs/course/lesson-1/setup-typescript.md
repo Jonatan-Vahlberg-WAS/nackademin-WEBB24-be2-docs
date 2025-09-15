@@ -74,9 +74,9 @@ npx tsc --watch
 ```
 
 och om du vill att koden också ska köras automatiskt kan du använda följande kommando:
-
+I ett separat terminal fönster:
 ```bash
-npx tsc --watch --onSuccess "node dist/index.js"
+node --watch dist/index.js
 ```
 
 
