@@ -5,7 +5,8 @@ import T from "../_library/Ui/TWTypography";
 import Badge from "../_library/Badge/TWBadge";
 
 export default function CourseLesson({ year, lesson, index, isThisWeek }) {
-  const lessonHasPassed = moment().isAfter(moment(lesson.date, "DD/MM"));
+  const lessonHasPassed = moment().isAfter(moment(lesson.date, "DD/MM").set("hour", 17));
+  console.log("LESSON HAS PASSED", lesson.date, lessonHasPassed);
   const currentYear = moment().year();
 
   const getLessonTypeVariant = (content) => {

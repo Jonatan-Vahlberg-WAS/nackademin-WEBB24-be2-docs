@@ -8,9 +8,9 @@ import { cn } from "../../utils/cn";
 
 export default function CourseLessonWeek({ year, week, lessons, lessonstoSkip }) {
   moment.locale("sv");
-
-  const isThisWeek = moment().isSame(moment(lessons[0].date, "DD/MM"), "week");
-  const weekHasPassed = moment().isAfter(moment(lessons[0].date, "DD/MM"));
+  const lastLesson = lessons[lessons.length - 1];
+  const isThisWeek = moment().isSame(moment(lastLesson.date, "DD/MM"), "week");
+  const weekHasPassed = moment().isAfter(moment(lastLesson.date, "DD/MM").set("hour", 17));
 
   const weekClass = cn(
     "overflow-hidden",
