@@ -32,7 +32,7 @@ UML, Unified Modeling Language, är ett standardiserat språk för att skapa mod
 
 ## Use Case diagrams
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/59279b25-6549-4dfc-aa14-6256062e570b/cfc2c0a7-276e-4831-aa61-7ad7093c0023/Untitled.png)
+![Use case diagram](./assets/uml_1.png)
 
 Användningsfallsdiagram (Use Case diagrams) är en typ av diagram inom UML som används för att visualisera de funktioner som ett system erbjuder och hur dessa funktioner interagerar med användare eller andra system (kallade aktörer). Dessa diagram är särskilt användbara för att få en övergripande bild av ett systems funktionella krav och för att kommunicera dessa krav mellan utvecklare och intressenter.
 
@@ -81,7 +81,7 @@ Genom att använda användningsfallsdiagram kan utvecklingsteam och intressenter
 
 ## Sequence diagrams
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/59279b25-6549-4dfc-aa14-6256062e570b/be556eb9-8ead-4a6a-9a21-487feb0f489a/Untitled.png)
+![Sequence diagram](./assets/uml_2.png)
 
 Sekvensdiagram är en typ av UML-diagram som används för att visa hur objekt interagerar med varandra över tid. Det illustrerar flödet av meddelanden mellan objekt och den tidsmässiga ordningen i vilken dessa meddelanden utbyts. Här är några nyckelkoncept och syften med sekvensdiagram:
 

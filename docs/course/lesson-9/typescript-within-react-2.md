@@ -247,5 +247,3 @@ Många third party bibliotek har numera lagt fokus på att ta fram types redan f
 Ett exempel på detta är Rich Text editor biblioteket [draft.js](https://draftjs.org/) som ger möjligheten att skapa en såkallad RTE dock så för att kunna använda den i typescript på ett typesafe och säkert sätt måste man hämta dess types
 
 `npm i draft-js @types/draft-js @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons`
-
-[RTE.zip](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2760ac89-4074-4a4f-bd95-77b1123015a7/RTE.zip)
