@@ -5,8 +5,6 @@ sidebar_position: 100
 
 import Scheduler from '@site/src/components/CourseOverview/Scheduler/Scheduler';
 
-## Presentation av individuella uppgiften
-
 Välj en tid nedan att presentera din individuella uppgift.  
 
 Din presentation ska innehålla både **demonstration av funktionalitet** och en **kort reflektion kring arbetet**.  
@@ -60,4 +58,6 @@ Utöver ovanstående ska du visa minst två av följande:
 
 ---
 
-<Scheduler title="Boka tid" schedulerId="webb24-be-2-presentation" dates={["2025-11-6"]}/>
+## Boka tid
+
+<Scheduler schedulerId="webb24-be-2-presentation" dates={["2025-11-6"]}/>
