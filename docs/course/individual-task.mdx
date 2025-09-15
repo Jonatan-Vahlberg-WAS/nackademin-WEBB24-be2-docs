@@ -6,71 +6,108 @@ hide_table_of_contents: true
 
 import ContentCountdownWrapper from "@site/src/components/ContentCountdownWrapper/ContentCountdownWrapper";
 
-Individuella uppgiften är för de som siktar mot VG. Här ska ni implementera utökade krav för att få VG.
-
 <ContentCountdownWrapper datetime="2025-08-25T09:00:00Z">
 ### **Bnb-hanteringsapplikation (liknande Airbnb)**
 
-**Deadline för inlämning:** 7 november
+**Deadline för inlämning:** 5 november 23:59  
+**Presentationsdatum:** 6 november från 09:00
 
-**Presentationsdatum:** 8 november
+---
 
-Er uppgift är att bygga en Bnb-hanteringsapplikation där användare kan hantera Bnb-bokningar. Applikationen ska använda **Next.js** med **TypeScript** för backend och koppla mot **MongoDB** eller en likvärdig databas. Frontend rekomenderas att det byggs i **next.js** men kan byggas inom **React-ekosystemet (React/Vite osv.)**.
+## 🎯 Uppgift
+Ni ska bygga en Bnb-hanteringsapplikation där användare kan hantera bokningar.
 
-**Modeller**:
+---
 
-1. **User**: Hanterar användarregistrering och autentisering.
-    - Fält: id, namn, e-post, lösenord, isAdmin
-2. **Property/Listing**: Representerar en Bnb-egendom.
-    - Fält: id, namn, beskrivning, plats, pris per natt, tillgänglighet
-3. **Booking**: Representerar en bokning gjord av en kund.
-    - Fält: id, skapad_datum, incheckning_datum, utcheckning_datum, total_pris
-    - nested: user (se ovan)
-    - Referenser: skapad_av: user, egendom: property
+## 🛠 Specifikationer
+
+### Backend
+- Byggs i **TypeScript** med ett eget API (inga färdiga lösningar).  
+  Förslagsvis utgår ni från **Hono** som gåtts igenom på kursen.
+- Implementera:
+  - CRUD-operationer för **Property**
+  - Användarregistrering och autentisering med **JWT**
+  - CRUD-operationer för **Booking**
+  - Automatisk beräkning av totalpris för bokningar baserat på pris per natt × vistelselängd
+- All backend-kod ska vara **strikt typad** (undvik `any` och liknande genvägar).
+
+### Frontend
+- Byggs i **React** och **TypeScript** (t.ex. med **Next.js** eller **Vite**).
+- Implementera enkla sidor för att:
+  - Registrera och logga in användare
+  - Skapa, läsa, uppdatera och radera properties
+  - Göra och visa bokningar
+- Fokusera på **funktionalitet** snarare än design.  
+  Designen är valfri, men det ska tydligt framgå att sidan är en Bnb-applikation.
+
+---
+
+## 📦 Modeller
+
+1. **User**  
+   Hanterar användarregistrering och autentisering.  
+   **Fält:** `id`, `name`, `email`, `password`, `isAdmin`
+
+2. **Property/Listing**  
+   Representerar en Bnb-egendom.  
+   **Fält:** `id`, `name`, `description`, `location`, `pricePerNight`, `availability`
+
+3. **Booking**  
+   Representerar en bokning gjord av en användare.  
+   **Fält:** `id`, `createdAt`, `checkInDate`, `checkOutDate`, `totalPrice`  
+   **Relationer:** `user`, `property`
 
 <aside>
-💡 Vissa fält kan ändras eller läggas till om ni har en bra motivering för det.
-
+💡 Ni kan lägga till eller ändra fält om det finns en bra motivering.
 </aside>
 
-### **Specifikationer:**
+---
 
-1. **Backend:**
-    - TypeScript
-    - Implementera CRUD-operationer för Property.
-    - Implementera användarregistrering och autentisering med JWT.
-    - Implementera CRUD-operationer för Booking.
-    - Beräkna totalpris vid bokning baserat på pris per natt och vistelselängd.
-2. **Frontend**:
-    - TypeScript
-    - Skapa enkla sidor för att:
-        - Registrera och logga in användare.
-        - Skapa, läsa, uppdatera och radera properties.
-        - Göra och visa bokningar.
-        - Design är valfri; fokusera på funktionalitet snarare än styling.
-3. **Examinationsform**:
-    - Studenterna lämnar in projektet med källkod och instruktioner för hur man kör applikationen.
-    - Studenterna redovisar genom att demonstrera funktionaliteten och förklara viktiga designbeslut och implementationer. Detta ska ske via en muntlig presentation.
+## 📊 Examinationsform
+- Lämna in projektet med källkod och instruktioner för hur man kör applikationen.  
+- Redovisa genom att demonstrera funktionaliteten och förklara viktiga designbeslut och implementationer.  
+- Redovisningen sker muntligt.
 
-### **Betygskriterier:**
+---
 
-- **Godkänd (G)**:
-    - Grundläggande funktionalitet för `CRUD-operationer` för `Property` fungerar korrekt.
-    - Hantering av `Properties` där manipulering av egendomar så som **(POST, PUT och DELETE)** kan endast göras av en inloggad användare.
-    - `API-rutter` är korrekt implementerade och svarar som förväntat.
-    - Redovisat fungerande funktionalitet med en sammanhängande front och backend.
-    - Enkel autentisering är implementerad.
-    - All backend ska vara **typad**. Detta innebär att man i största mån undviker att typecasta till `any` och liknande genvägar.
-- **Väl Godkänd (VG)**: **Minst 2 av nedan ska ha uppfyltlts**
-    - **Booking (lätt):** Bokningar kan endast skapas av en inloggad användare och innehåller användaruppgifter (se ovan) och `property`. Totalpriset beräknas baserat på pris per natt och vistelselängd.
-    - **Property/Listing (medel):**  Listings ska endast kunnas ta bort uppdateras av den som skapade dem dock så ska det vara möjligt för en (admin) att ta bort dem.
-    - **ListingAgent (svårare):** Utveckling på booking flödet som ser ena parten som `user` och andra som `ListingAgent` där `ListingAgent` måste godta bokningen och innan dess så har bokningen en `pending` status. Godtas den så blir `Booking` status `accepted` annars `rejected`
-    
-    ### Valfri design men det ska vara tydligt vad hemsidan används för:
-    ![Design](./assets/images/hotel_1.jpg)
-    ![Design](./assets/images/hotel_2.png)
-    ![Design](./assets/images/hotel_3.png)
-    
-    Lägg ribban där det känns lämpligt men lägg störst fokus på funktionalitet.
+## ✅ Betygskriterier
+
+### Godkänd (G)
+- Grundläggande CRUD för **Property** fungerar och API-rutterna svarar korrekt.  
+- Endast inloggade användare kan skapa, uppdatera och ta bort properties.  
+- Fungerande integration mellan frontend och backend.  
+- Enkel autentisering är implementerad.  
+- Backend är strikt typad utan användning av `any`.
+
+### Väl Godkänd (VG)  
+*Minst två av följande ska uppfyllas:*
+
+1. **Booking (lätt):**  
+   Endast inloggade användare kan skapa bokningar.  
+   Bokningen innehåller användaruppgifter och property.  
+   Totalpris beräknas automatiskt.
+
+2. **Property/Listing (medel):**  
+   Endast skaparen kan uppdatera eller ta bort en listing.  
+   En admin kan också ta bort listings.
+
+3. **ListingAgent (svårare):**  
+   Utveckla bokningsflödet där bokningen först får status `pending`.  
+   En `ListingAgent` måste godkänna eller avvisa bokningen, vilket ändrar status till `accepted` eller `rejected`.
+
+---
+
+### 🎨 Designexempel (valfritt)
+<div className="flex flex-row flex-wrap gap-16">
+<div className="flex h-150 w-150">
+![Design](./assets/images/hotel_1.jpg)
+</div>
+<div className="flex h-150 w-150">
+![Design](./assets/images/hotel_2.png)
+</div>
+<div className="flex h-150 w-150">
+![Design](./assets/images/hotel_3.png)
+</div>
+</div>
 
 </ContentCountdownWrapper>
