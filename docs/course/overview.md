@@ -7,7 +7,9 @@ import CourseSchedule from '@site/src/components/CourseOverview/CourseSchedule';
 import CourseLessons from '@site/src/components/CourseOverview/CourseLessons';
 
 ## Kurskod
-[Kurskod](https://github.com/Jonatan-Vahlberg-WAS/nackademin-WEBB24-cms-lessons)
+[Backend](https://github.com/Jonatan-Vahlberg-WAS/nackademin-WEBB24-backend-2-be)
+
+**Frontend kommer snart**
 
 ### [Inför kursen - Förberedelser och andra tips](/docs/course/preperation)
 
