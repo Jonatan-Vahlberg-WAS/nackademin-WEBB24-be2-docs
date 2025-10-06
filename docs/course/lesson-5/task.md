@@ -47,7 +47,7 @@ create table if not exists public.profiles (
   full_name text,
   avatar_url text,
   bio text,
-  updated_at timestamp with time zone default now()
+  updated_at timestamp with time zone default now(),
   role user_role default 'student'
 );
 ```
