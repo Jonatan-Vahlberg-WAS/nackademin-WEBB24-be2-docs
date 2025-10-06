@@ -38,6 +38,9 @@ Endast **ägaren** ska kunna läsa/uppdatera **sin** rad.
 ### 1) Skapa tabell
 
 ```sql
+-- Create a new enum type
+CREATE TYPE user_role AS ENUM ('student', 'teacher', 'admin');
+
 -- profiles kopplas till auth.users via user_id
 create table if not exists public.profiles (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -45,6 +48,7 @@ create table if not exists public.profiles (
   avatar_url text,
   bio text,
   updated_at timestamp with time zone default now()
+  role user_role default 'student'
 );
 ```
 
