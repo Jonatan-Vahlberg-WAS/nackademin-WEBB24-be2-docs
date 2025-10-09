@@ -15,11 +15,17 @@ import ContentCountdownWrapper from "@site/src/components/ContentCountdownWrappe
 ---
 
 ## 🎯 Uppgift
-Ni ska bygga en Bnb-hanteringsapplikation där användare kan hantera bokningar.
+Ni ska bygga en Bnb-hanteringsapplikation där användare kan hantera bokningar inom TypeScript med Fullstack JS och en extern DB.
 
 ---
+### Dra inspiration från:
+https://github.com/Jonatan-Vahlberg-WAS/nackademin-WEBB24-backend-2-be (Backend Lektions kod)
+https://github.com/Jonatan-Vahlberg-WAS/nackademin-WEBB24-backend-2-notes-be (Backend Repitition kod)
 
 ## 🛠 Specifikationer
+
+### Databas
+Förslaget är att ni använder **Supabase** som är det vi har gått igenom på lektionerna men annan DB går också bra men kom ihåg att den ska vara deployad inför presentationen.
 
 ### Backend
 - Byggs i **TypeScript** med ett eget API (inga färdiga lösningar).  
@@ -43,19 +49,23 @@ Ni ska bygga en Bnb-hanteringsapplikation där användare kan hantera bokningar.
 ---
 
 ## 📦 Modeller
-
-1. **User**  
+Förslag på modeller som man kan använda.
+1. **User/UserProfile** (UserProfile om man använder Supabase)  
    Hanterar användarregistrering och autentisering.  
    **Fält:** `id`, `name`, `email`, `password`, `isAdmin`
+   
+   *💡 Om man använder **supabase** så kommer password aldrig sparas i databasen då det kommer auth inom supabase hantera.*
 
 2. **Property/Listing**  
    Representerar en Bnb-egendom.  
    **Fält:** `id`, `name`, `description`, `location`, `pricePerNight`, `availability`
+   
+   **relationer:** `user_id` (user), `listing_agent_id/uploader_id` (user)
 
 3. **Booking**  
    Representerar en bokning gjord av en användare.  
    **Fält:** `id`, `createdAt`, `checkInDate`, `checkOutDate`, `totalPrice`  
-   **Relationer:** `user`, `property`
+   **Relationer:** `user_id`, `property_id` (Many to Many)
 
 <aside>
 💡 Ni kan lägga till eller ändra fält om det finns en bra motivering.
@@ -74,26 +84,32 @@ Ni ska bygga en Bnb-hanteringsapplikation där användare kan hantera bokningar.
 
 ### Godkänd (G)
 - Grundläggande CRUD för **Property** fungerar och API-rutterna svarar korrekt.  
-- Endast inloggade användare kan skapa, uppdatera och ta bort properties.  
+- Endast inloggade användare kan skapa, uppdatera och ta bort properties.
+   - Tips: RLS och policies på Supabase
 - Fungerande integration mellan frontend och backend.  
 - Enkel autentisering är implementerad.  
+   - Tips: Cookie based auth som vi går igenom på lektionerna
 - Backend är strikt typad utan användning av `any`.
+   - Frontend också men mer tolerans för type errors där
 
 ### Väl Godkänd (VG)  
 *Minst två av följande ska uppfyllas:*
 
 1. **Booking (lätt):**  
-   Endast inloggade användare kan skapa bokningar.  
-   Bokningen innehåller användaruppgifter och property.  
-   Totalpris beräknas automatiskt.
+   - Endast inloggade användare kan skapa bokningar.  
+   - Bokningen innehåller användaruppgifter och property.  
+   - Totalpris beräknas automatiskt.
+      - Tips: Trigger functions
+
 
 2. **Property/Listing (medel):**  
-   Endast skaparen kan uppdatera eller ta bort en listing.  
-   En admin kan också ta bort listings.
+   - Endast skaparen kan uppdatera eller ta bort en listing.  
+   - En admin kan också ta bort listings.
+      - Tips: Policies och functions
 
 3. **ListingAgent (svårare):**  
-   Utveckla bokningsflödet där bokningen först får status `pending`.  
-   En `ListingAgent` måste godkänna eller avvisa bokningen, vilket ändrar status till `accepted` eller `rejected`.
+   - Utveckla bokningsflödet där bokningen först får status `pending`.  
+   - En `ListingAgent` (den som har lagt upp objectet) måste godkänna eller avvisa bokningen, vilket ändrar status till `accepted` eller `rejected`.
 
 ---
 
